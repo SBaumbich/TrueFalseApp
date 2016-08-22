@@ -3,6 +3,7 @@
 //  TrueFalseStarter
 //
 //  Created by Pasan Premaratne on 3/9/16.
+//  Modified by Scott Baumbich on 8/21/16
 //  Copyright © 2016 Treehouse. All rights reserved.
 //
 
@@ -16,8 +17,9 @@ class ViewController: UIViewController {
     var questionsAsked = 0
     var correctQuestions = 0
     var indexOfSelectedQuestion: Int = 0
-    
+    // controller
     var gameSound: SystemSoundID = 0
+    
     
     let trivia: [[String : String]] = [
         ["Question": "Only female koalas can whistle", "Answer": "False"],
