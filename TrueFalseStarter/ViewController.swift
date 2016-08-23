@@ -46,7 +46,7 @@ class ViewController: UIViewController {
         option2.setTitle("\(questionDictionary["Option2"]!)", forState: .Normal)
         option3.setTitle("\(questionDictionary["Option3"]!)", forState: .Normal)
         option4.setTitle("\(questionDictionary["Option4"]!)", forState: .Normal)
-        playAgainButton.hidden = true
+        playAgainButton.hidden = false
     }
     
     func displayScore() {
@@ -76,7 +76,7 @@ class ViewController: UIViewController {
             print(sender.titleLabel?.text)
         }
         
-        loadNextRoundWithDelay(seconds: 2)
+        loadNextRoundWithDelay(seconds: 2 )
     }
     
     func nextRound() {
