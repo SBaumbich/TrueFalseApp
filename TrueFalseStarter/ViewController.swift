@@ -46,12 +46,13 @@ class ViewController: UIViewController {
         option2.setTitle("\(questionDictionary["Option2"]!)", forState: .Normal)
         option3.setTitle("\(questionDictionary["Option3"]!)", forState: .Normal)
         option4.setTitle("\(questionDictionary["Option4"]!)", forState: .Normal)
-        playAgainButton.hidden = false
+        playAgainButton.hidden = true
     }
     
     func displayScore() {
-        // Hide the answer buttons
         
+        // Hide the answer buttons
+        hideButtons(true)
         
         // Display play again button
         playAgainButton.hidden = false
@@ -89,15 +90,23 @@ class ViewController: UIViewController {
         }
     }
     
+    func hideButtons(status: Bool) {
+        option1.hidden = status
+        option2.hidden = status
+        option3.hidden = status
+        option4.hidden = status
+    }
+    
     @IBAction func playAgain() {
         // Show the answer buttons
         
-//        questionsAsked = 0
-//        correctQuestions = 0
-       nextRound()
+        game.questionsAsked = 0
+        game.correctQuestions = 0
+        gameQuestions.indexOfSelectedQuestion = []
+        hideButtons(false)
+        nextRound()
+        game.playGameStartSound()
     }
-    
-
     
     // MARK: Helper Methods
     
