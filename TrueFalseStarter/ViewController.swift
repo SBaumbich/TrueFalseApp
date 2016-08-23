@@ -13,78 +13,74 @@ import AudioToolbox
 
 class ViewController: UIViewController {
     
-    let questionsPerRound = 4
-    var questionsAsked = 0
-    var correctQuestions = 0
-    var indexOfSelectedQuestion: Int = 0
-    // controller
-    var gameSound: SystemSoundID = 0
-    
-    
-    let trivia: [[String : String]] = [
-        ["Question": "Only female koalas can whistle", "Answer": "False"],
-        ["Question": "Blue whales are technically whales", "Answer": "True"],
-        ["Question": "Camels are cannibalistic", "Answer": "False"],
-        ["Question": "All ducks are birds", "Answer": "True"]
-    ]
-    
     @IBOutlet weak var questionField: UILabel!
-    @IBOutlet weak var trueButton: UIButton!
-    @IBOutlet weak var falseButton: UIButton!
     @IBOutlet weak var playAgainButton: UIButton!
+    @IBOutlet var option1: UIButton!
+    @IBOutlet var option2: UIButton!
+    @IBOutlet var option3: UIButton!
+    @IBOutlet var option4: UIButton!
+    var gameQuestions = Questions()
+    var game = Game()
     
-
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadGameStartSound()
+        game.loadGameStartSound()
         // Start game
-        playGameStartSound()
+        game.playGameStartSound()
         displayQuestion()
     }
-
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
+    
     func displayQuestion() {
-        indexOfSelectedQuestion = GKRandomSource.sharedRandom().nextIntWithUpperBound(trivia.count)
-        let questionDictionary = trivia[indexOfSelectedQuestion]
+        let questionDictionary = gameQuestions.selectRandomQuestion()
         questionField.text = questionDictionary["Question"]
+        option1.setTitle("\(questionDictionary["Option1"]!)", forState: .Normal)
+        option2.setTitle("\(questionDictionary["Option2"]!)", forState: .Normal)
+        option3.setTitle("\(questionDictionary["Option3"]!)", forState: .Normal)
+        option4.setTitle("\(questionDictionary["Option4"]!)", forState: .Normal)
         playAgainButton.hidden = true
     }
     
     func displayScore() {
         // Hide the answer buttons
-        trueButton.hidden = true
-        falseButton.hidden = true
+        
         
         // Display play again button
         playAgainButton.hidden = false
         
-        questionField.text = "Way to go!\nYou got \(correctQuestions) out of \(questionsPerRound) correct!"
+       questionField.text = "Way to go!\nYou got \(game.correctQuestions) out of \(game.questionsPerRound) correct!"
         
     }
     
     @IBAction func checkAnswer(sender: UIButton) {
         // Increment the questions asked counter
-        questionsAsked += 1
+        game.questionsAsked += 1
         
-        let selectedQuestionDict = trivia[indexOfSelectedQuestion]
+        let selectedQuestionDict = gameQuestions.currentQuestion
         let correctAnswer = selectedQuestionDict["Answer"]
         
-        if (sender === trueButton &&  correctAnswer == "True") || (sender === falseButton && correctAnswer == "False") {
-            correctQuestions += 1
+        if sender.titleLabel?.text == correctAnswer! {
+            game.correctQuestions += 1
             questionField.text = "Correct!"
+            print(sender.titleLabel?.text)
         } else {
             questionField.text = "Sorry, wrong answer!"
+            print(sender.titleLabel?.text)
         }
         
         loadNextRoundWithDelay(seconds: 2)
     }
     
     func nextRound() {
-        if questionsAsked == questionsPerRound {
+        if game.questionsAsked == game.questionsPerRound {
             // Game is over
             displayScore()
         } else {
@@ -95,12 +91,10 @@ class ViewController: UIViewController {
     
     @IBAction func playAgain() {
         // Show the answer buttons
-        trueButton.hidden = false
-        falseButton.hidden = false
         
-        questionsAsked = 0
-        correctQuestions = 0
-        nextRound()
+//        questionsAsked = 0
+//        correctQuestions = 0
+       nextRound()
     }
     
 
@@ -117,16 +111,6 @@ class ViewController: UIViewController {
         dispatch_after(dispatchTime, dispatch_get_main_queue()) {
             self.nextRound()
         }
-    }
-    
-    func loadGameStartSound() {
-        let pathToSoundFile = NSBundle.mainBundle().pathForResource("GameSound", ofType: "wav")
-        let soundURL = NSURL(fileURLWithPath: pathToSoundFile!)
-        AudioServicesCreateSystemSoundID(soundURL, &gameSound)
-    }
-    
-    func playGameStartSound() {
-        AudioServicesPlaySystemSound(gameSound)
     }
 }
 
