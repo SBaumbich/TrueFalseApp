@@ -13,10 +13,10 @@ import AudioToolbox
 
 class ViewController: UIViewController {
     
-    let questionsPerRound = 4 //*GAME
-    var questionsAsked = 0 //GAME
-    var correctQuestions = 0 //*GAME
-    var indexOfSelectedQuestion: Int = 0 //*Game
+    let questionsPerRound = 4
+    var questionsAsked = 0
+    var correctQuestions = 0
+    var indexOfSelectedQuestion: Int = 0
     // controller
     var gameSound: SystemSoundID = 0
     
