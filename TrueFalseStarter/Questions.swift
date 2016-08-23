@@ -7,10 +7,13 @@
 //
 
 import Foundation
+import GameKit
 
 struct Questions {
    
-    var questions: [[String:String]] = [
+    var indexOfSelectedQuestion: [Int] = []
+    
+    let questions: [[String:String]] = [
         ["Question": "This was the only US President to serve more than two consecutive terms.", "Option1": "George Washington", "Option2": "Franklin D. Roosevelt", "Option3": "Woodrow Wilson", "Option4": "Andrew Jackson"],
         
         ["Question": "Which of the following countries has the most residents?", "Option1": "Nigeria", "Option2": "Russia", "Option3": "Iran", "Option4": "Vietnam"],
@@ -31,4 +34,38 @@ struct Questions {
         
         ["Question": "Which of these countries won the most medals in the 2012 Summer Games??", "Option1": "France", "Option2": "Germany", "Option3": "Japan", "Option4": "Great Britian"]
     ]
+    
+    // Get random Index Number
+    func randomIndexNum() -> Int {
+        return GKRandomSource.sharedRandom().nextIntWithUpperBound(questions.count)
+    }
+    
+    mutating func selectRandomQuestion() -> [String:String] {
+        var questionSelected = false
+        
+        while (questionSelected == false) {
+            let randomQ = randomIndexNum()
+            
+            if (indexOfSelectedQuestion.count >= questions.count){
+                break
+            }
+            else if indexOfSelectedQuestion.contains(randomQ) {
+                // Guess another number
+                print(randomQ)
+            } else {
+                let selectedQuestion = questions[randomQ]
+                indexOfSelectedQuestion.append(randomQ)
+                questionSelected = true
+                return selectedQuestion
+            }
+        }
+        return ["nil": "nil"]
+    }
 }
+
+
+
+
+
+
+

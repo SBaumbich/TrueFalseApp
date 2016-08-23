@@ -9,14 +9,14 @@
 import Foundation
 import AudioToolbox
 
-class Game {
-
-    let questionsPerRound: Int
-    let lightningMode: Bool
-    var questionsAsked = 0
-    var correctQuestions = 0
-    var indexOfSelectedQuestion: Int = 0
-    var gameSound: SystemSoundID = 0
-
-    
-}
+//class Game {
+//
+//    let questionsPerRound: Int
+//    let lightningMode: Bool
+//    var questionsAsked = 0
+//    var correctQuestions = 0
+//    var indexOfSelectedQuestion: Int = 0
+//    var gameSound: SystemSoundID = 0
+//
+//    
+//}
