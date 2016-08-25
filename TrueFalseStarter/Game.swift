@@ -22,13 +22,12 @@ class Game {
     
     
     
-    func loadGameStartSound() {
-        let pathToSoundFile = NSBundle.mainBundle().pathForResource("GameSound", ofType: "wav")
+    func playGameSound(fileName: String, fileType: String) {
+        let pathToSoundFile = NSBundle.mainBundle().pathForResource(fileName, ofType: fileType)
         let soundURL = NSURL(fileURLWithPath: pathToSoundFile!)
         AudioServicesCreateSystemSoundID(soundURL, &gameSound)
-    }
-    
-    func playGameStartSound() {
         AudioServicesPlaySystemSound(gameSound)
     }
 }
+
+

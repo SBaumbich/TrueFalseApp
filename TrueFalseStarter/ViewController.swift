@@ -26,9 +26,8 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        game.loadGameStartSound()
         // Start game
-        game.playGameStartSound()
+        game.playGameSound("GameSound", fileType: "wav")
         displayQuestion()
     }
     
@@ -72,9 +71,11 @@ class ViewController: UIViewController {
             game.correctQuestions += 1
             questionField.text = "Correct!"
             print(sender.titleLabel?.text)
+            game.playGameSound("SuccessSound", fileType: "mp3")
         } else {
             questionField.text = "Sorry, wrong answer!"
             print(sender.titleLabel?.text)
+            game.playGameSound("ErrorSound", fileType: "wav")
         }
         
         loadNextRoundWithDelay(seconds: 2 )
@@ -105,7 +106,7 @@ class ViewController: UIViewController {
         gameQuestions.indexOfSelectedQuestion = []
         hideButtons(false)
         nextRound()
-        game.playGameStartSound()
+//        game.playGameStartSound()
     }
     
     // MARK: Helper Methods
