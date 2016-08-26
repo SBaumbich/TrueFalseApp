@@ -12,6 +12,10 @@ import GameKit
 import AudioToolbox
 
 class ViewController: UIViewController {
+
+/////////////////////////////
+// MARK: Instance variables /
+/////////////////////////////
     
     @IBOutlet weak var questionField: UILabel!
     @IBOutlet weak var playAgainButton: UIButton!
@@ -22,7 +26,9 @@ class ViewController: UIViewController {
     var gameQuestions = Questions()
     var game = Game()
     
-    
+/////////////////////////////
+// MARK: Instance methods ///
+/////////////////////////////
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,29 +42,22 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+
+/////////////////////////////
+// MARK: IBActions //////////
+/////////////////////////////
     
-    
-    func displayQuestion() {
-        let questionDictionary = gameQuestions.selectRandomQuestion()
-        questionField.text = questionDictionary["Question"]
-        option1.setTitle("\(questionDictionary["Option1"]!)", forState: .Normal)
-        option2.setTitle("\(questionDictionary["Option2"]!)", forState: .Normal)
-        option3.setTitle("\(questionDictionary["Option3"]!)", forState: .Normal)
-        option4.setTitle("\(questionDictionary["Option4"]!)", forState: .Normal)
-        playAgainButton.hidden = true
+    @IBAction func playAgain() {
+        // Show the answer buttons
+        
+        game.questionsAsked = 0
+        game.correctQuestions = 0
+        gameQuestions.indexOfSelectedQuestion = []
+        hideButtons(false)
+        nextRound()
+        game.playGameSound("GameSound", fileType: "wav")
     }
     
-    func displayScore() {
-        
-        // Hide the answer buttons
-        hideButtons(true)
-        
-        // Display play again button
-        playAgainButton.hidden = false
-        
-       questionField.text = "Way to go!\nYou got \(game.correctQuestions) out of \(game.questionsPerRound) correct!"
-        
-    }
     
     @IBAction func checkAnswer(sender: UIButton) {
         // Increment the questions asked counter
@@ -82,6 +81,26 @@ class ViewController: UIViewController {
         loadNextRoundWithDelay(seconds: 1)
     }
     
+/////////////////////////////
+// MARK: Helper Methods//////
+/////////////////////////////
+    
+    func hideButtons(status: Bool) {
+        option1.hidden = status
+        option2.hidden = status
+        option3.hidden = status
+        option4.hidden = status
+    }
+    
+    
+    func enableButton(status: Bool) {
+        option1.enabled = status
+        option2.enabled = status
+        option3.enabled = status
+        option4.enabled = status
+    }
+    
+    
     func nextRound() {
         if game.questionsAsked == game.questionsPerRound {
             // Game is over
@@ -93,32 +112,30 @@ class ViewController: UIViewController {
         }
     }
     
-    func hideButtons(status: Bool) {
-        option1.hidden = status
-        option2.hidden = status
-        option3.hidden = status
-        option4.hidden = status
-    }
     
-    func enableButton(status: Bool) {
-        option1.enabled = status
-        option2.enabled = status
-        option3.enabled = status
-        option4.enabled = status
-    }
-    
-    @IBAction func playAgain() {
-        // Show the answer buttons
+    func displayScore() {
         
-        game.questionsAsked = 0
-        game.correctQuestions = 0
-        gameQuestions.indexOfSelectedQuestion = []
-        hideButtons(false)
-        nextRound()
-//        game.playGameStartSound()
+        // Hide the answer buttons
+        hideButtons(true)
+        
+        // Display play again button
+        playAgainButton.hidden = false
+        
+        questionField.text = "Way to go!\nYou got \(game.correctQuestions) out of \(game.questionsPerRound) correct!"
+        
     }
     
-    // MARK: Helper Methods
+    
+    func displayQuestion() {
+        let questionDictionary = gameQuestions.selectRandomQuestion()
+        questionField.text = questionDictionary["Question"]
+        option1.setTitle("\(questionDictionary["Option1"]!)", forState: .Normal)
+        option2.setTitle("\(questionDictionary["Option2"]!)", forState: .Normal)
+        option3.setTitle("\(questionDictionary["Option3"]!)", forState: .Normal)
+        option4.setTitle("\(questionDictionary["Option4"]!)", forState: .Normal)
+        playAgainButton.hidden = true
+    }
+    
     
     func loadNextRoundWithDelay(seconds seconds: Int) {
         // Converts a delay in seconds to nanoseconds as signed 64 bit integer
@@ -132,4 +149,11 @@ class ViewController: UIViewController {
         }
     }
 }
+
+
+
+
+
+
+
 
