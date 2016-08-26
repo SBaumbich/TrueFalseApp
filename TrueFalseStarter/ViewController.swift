@@ -66,6 +66,7 @@ class ViewController: UIViewController {
         
         let selectedQuestionDict = gameQuestions.currentQuestion
         let correctAnswer = selectedQuestionDict["Answer"]
+        enableButton(false)
         
         if sender.titleLabel?.text == correctAnswer! {
             game.correctQuestions += 1
@@ -78,7 +79,7 @@ class ViewController: UIViewController {
             game.playGameSound("ErrorSound", fileType: "wav")
         }
         
-        loadNextRoundWithDelay(seconds: 2 )
+        loadNextRoundWithDelay(seconds: 1)
     }
     
     func nextRound() {
@@ -87,6 +88,7 @@ class ViewController: UIViewController {
             displayScore()
         } else {
             // Continue game
+            enableButton(true)
             displayQuestion()
         }
     }
@@ -96,6 +98,13 @@ class ViewController: UIViewController {
         option2.hidden = status
         option3.hidden = status
         option4.hidden = status
+    }
+    
+    func enableButton(status: Bool) {
+        option1.enabled = status
+        option2.enabled = status
+        option3.enabled = status
+        option4.enabled = status
     }
     
     @IBAction func playAgain() {
