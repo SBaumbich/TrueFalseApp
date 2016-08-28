@@ -23,6 +23,7 @@ class ViewController: UIViewController {
     @IBOutlet var option2: UIButton!
     @IBOutlet var option3: UIButton!
     @IBOutlet var option4: UIButton!
+    let buttonColor = UIColor(red: 12/255, green: 121/255, blue: 150/255, alpha: 1)
     var gameQuestions = Questions()
     var game = Game()
     
@@ -65,16 +66,32 @@ class ViewController: UIViewController {
         
         let selectedQuestionDict = gameQuestions.currentQuestion
         let correctAnswer = selectedQuestionDict["Answer"]
-        enableButton(false)
+        //enableButton(false)
         
         if sender.titleLabel?.text == correctAnswer! {
             game.correctQuestions += 1
             questionField.text = "Correct!"
-            print(sender.titleLabel?.text)
             game.playGameSound("SuccessSound", fileType: "mp3")
+
         } else {
+            
+            if option1.titleLabel?.text == correctAnswer {
+                option1.backgroundColor = UIColor.greenColor()
+                option1.titleLabel?.textColor = buttonColor
+            }
+            if option2.titleLabel?.text == correctAnswer {
+                option2.backgroundColor = UIColor.greenColor()
+                option2.titleLabel?.textColor = buttonColor
+            }
+            if option3.titleLabel?.text == correctAnswer {
+                option3.backgroundColor = UIColor.greenColor()
+                option3.titleLabel?.textColor = buttonColor
+            }
+            if option4.titleLabel?.text == correctAnswer {
+                option4.backgroundColor = UIColor.greenColor()
+                option4.titleLabel?.textColor = buttonColor
+            }
             questionField.text = "Sorry, wrong answer!"
-            print(sender.titleLabel?.text)
             game.playGameSound("ErrorSound", fileType: "wav")
         }
         
@@ -102,6 +119,12 @@ class ViewController: UIViewController {
     
     
     func nextRound() {
+        
+        option1.backgroundColor = buttonColor
+        option2.backgroundColor = buttonColor
+        option3.backgroundColor = buttonColor
+        option4.backgroundColor = buttonColor
+        
         if game.questionsAsked == game.questionsPerRound {
             // Game is over
             displayScore()
