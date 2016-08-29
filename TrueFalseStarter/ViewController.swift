@@ -7,6 +7,7 @@
 //  Copyright © 2016 Treehouse. All rights reserved.
 //
 
+import Foundation
 import UIKit
 import GameKit
 import AudioToolbox
@@ -23,9 +24,15 @@ class ViewController: UIViewController {
     @IBOutlet var option2: UIButton!
     @IBOutlet var option3: UIButton!
     @IBOutlet var option4: UIButton!
+    @IBOutlet var option5: UIButton!
+    @IBOutlet var timerLabel: UILabel!
+    @IBOutlet var option6: UIButton!
     let buttonColor = UIColor(red: 12/255, green: 121/255, blue: 150/255, alpha: 1)
+    var timer = NSTimer()
+    var count = 16
     var gameQuestions = Questions()
     var game = Game()
+    var showMenueScreen = true
     
 /////////////////////////////
 // MARK: Instance methods ///
@@ -37,12 +44,6 @@ class ViewController: UIViewController {
         game.playGameSound("GameSound", fileType: "wav")
         displayQuestion()
     }
-    
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
 
 /////////////////////////////
 // MARK: IBActions //////////
@@ -50,7 +51,6 @@ class ViewController: UIViewController {
     
     @IBAction func playAgain() {
         // Show the answer buttons
-        
         game.questionsAsked = 0
         game.correctQuestions = 0
         gameQuestions.indexOfSelectedQuestion = []
@@ -60,42 +60,61 @@ class ViewController: UIViewController {
     }
     
     
+    @IBAction func menuAction(sender: UIButton) {
+        
+        if sender.titleLabel?.text == "Norman" {
+            showMenueScreen = false
+            option5.hidden = true
+            option6.hidden = true
+            hideButtons(false)
+            displayQuestion()
+            
+        } else {
+            startTimer()
+            timerLabel.hidden = false
+            showMenueScreen = false
+            option5.hidden = true
+            option6.hidden = true
+            hideButtons(false)
+            displayQuestion()
+            
+        }
+    }
+    
     @IBAction func checkAnswer(sender: UIButton) {
+        
+        // Lock buttons
+        enableButton(false)
+        
         // Increment the questions asked counter
         game.questionsAsked += 1
         
+        
         let selectedQuestionDict = gameQuestions.currentQuestion
         let correctAnswer = selectedQuestionDict["Answer"]
-        //enableButton(false)
         
         if sender.titleLabel?.text == correctAnswer! {
             game.correctQuestions += 1
             questionField.text = "Correct!"
             game.playGameSound("SuccessSound", fileType: "mp3")
+            loadNextRoundWithDelay(seconds: 1)
 
         } else {
-            
-            if option1.titleLabel?.text == correctAnswer {
-                option1.backgroundColor = UIColor.greenColor()
-                option1.titleLabel?.textColor = buttonColor
-            }
-            if option2.titleLabel?.text == correctAnswer {
-                option2.backgroundColor = UIColor.greenColor()
-                option2.titleLabel?.textColor = buttonColor
-            }
-            if option3.titleLabel?.text == correctAnswer {
-                option3.backgroundColor = UIColor.greenColor()
-                option3.titleLabel?.textColor = buttonColor
-            }
-            if option4.titleLabel?.text == correctAnswer {
-                option4.backgroundColor = UIColor.greenColor()
-                option4.titleLabel?.textColor = buttonColor
-            }
             questionField.text = "Sorry, wrong answer!"
             game.playGameSound("ErrorSound", fileType: "wav")
+            for view in self.view.subviews as [UIView] {
+                if let stackView = view as? UIStackView {
+                    for button in stackView.subviews as! [UIButton] {
+                        if button.titleLabel?.text == correctAnswer {
+                            dispatch_async(dispatch_get_main_queue()) {
+                                button.backgroundColor = UIColor(red: 18/255, green: 173/255, blue: 42/255, alpha: 1)
+                            }
+                        }
+                    }
+                }
+            }
+         loadNextRoundWithDelay(seconds: 1)
         }
-        
-        loadNextRoundWithDelay(seconds: 1)
     }
     
 /////////////////////////////
@@ -120,21 +139,53 @@ class ViewController: UIViewController {
     
     func nextRound() {
         
+        
         option1.backgroundColor = buttonColor
         option2.backgroundColor = buttonColor
         option3.backgroundColor = buttonColor
         option4.backgroundColor = buttonColor
         
-        if game.questionsAsked == game.questionsPerRound {
+        if game.questionsAsked >= game.questionsPerRound {
             // Game is over
+            timerLabel.hidden = true
             displayScore()
         } else {
             // Continue game
-            enableButton(true)
+            self.count = 16
             displayQuestion()
         }
     }
     
+    
+    
+    
+    
+    
+    
+    
+    
+    func startTimer() {
+        
+        timer = NSTimer(timeInterval: 1.0, target: self, selector: #selector(ViewController.countUp), userInfo: nil, repeats: true)
+        NSRunLoop.currentRunLoop().addTimer(timer, forMode: NSRunLoopCommonModes)
+        
+    }
+    
+    func countUp() {
+        
+        count -= 1
+        if(count >= 0) {
+            timerLabel.text = String(count)
+        } else {
+            dispatch_async(dispatch_get_main_queue()) {
+                // Increment the questions asked counter
+                self.game.questionsAsked += 1
+                self.questionField.text = "YOU RAN OUT OF TIME!"
+                self.game.playGameSound("ErrorSound", fileType: "wav")
+                self.loadNextRoundWithDelay(seconds: 1)
+            }
+        }
+    }
     
     func displayScore() {
         
@@ -150,13 +201,26 @@ class ViewController: UIViewController {
     
     
     func displayQuestion() {
-        let questionDictionary = gameQuestions.selectRandomQuestion()
-        questionField.text = questionDictionary["Question"]
-        option1.setTitle("\(questionDictionary["Option1"]!)", forState: .Normal)
-        option2.setTitle("\(questionDictionary["Option2"]!)", forState: .Normal)
-        option3.setTitle("\(questionDictionary["Option3"]!)", forState: .Normal)
-        option4.setTitle("\(questionDictionary["Option4"]!)", forState: .Normal)
-        playAgainButton.hidden = true
+        
+        if showMenueScreen == true {
+            playAgainButton.hidden = true
+            timerLabel.hidden = true
+            hideButtons(true)
+            questionField.text = "Select Game Mode"
+            
+            
+        } else {
+            let questionDictionary = gameQuestions.selectRandomQuestion()
+            dispatch_async(dispatch_get_main_queue()) {
+                self.questionField.text = questionDictionary["Question"]
+                self.option1.setTitle("\(questionDictionary["Option1"]!)", forState: .Normal)
+                self.option2.setTitle("\(questionDictionary["Option2"]!)", forState: .Normal)
+                self.option3.setTitle("\(questionDictionary["Option3"]!)", forState: .Normal)
+                self.option4.setTitle("\(questionDictionary["Option4"]!)", forState: .Normal)
+                self.playAgainButton.hidden = true
+                self.enableButton(true)
+            }
+        }
     }
     
     

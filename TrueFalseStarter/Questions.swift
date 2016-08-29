@@ -53,19 +53,25 @@ struct Questions {
             }
             else if indexOfSelectedQuestion.contains(randomQ) {
                 // Guess another number
-                print(randomQ)
+                print("Random Guess Number:\(randomQ)")
             } else {
                 let selectedQuestion = questions[randomQ]
                 indexOfSelectedQuestion.append(randomQ)
                 questionSelected = true
                 currentQuestion = selectedQuestion
-                
+                print("Number of used answers \(indexOfSelectedQuestion.count)")
                 return selectedQuestion
             }
         }
         return ["nil": "nil"]
     }
 }
+
+
+
+
+
+
 
 
 
