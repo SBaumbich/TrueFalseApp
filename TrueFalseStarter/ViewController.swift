@@ -113,7 +113,7 @@ class ViewController: UIViewController {
                     }
                 }
             }
-         loadNextRoundWithDelay(seconds: 1)
+            loadNextRoundWithDelay(seconds: 1)
         }
     }
     
@@ -151,7 +151,6 @@ class ViewController: UIViewController {
             displayScore()
         } else {
             // Continue game
-            self.count = 16
             displayQuestion()
         }
     }
@@ -178,6 +177,7 @@ class ViewController: UIViewController {
             timerLabel.text = String(count)
         } else {
             dispatch_async(dispatch_get_main_queue()) {
+                self.count = 16
                 // Increment the questions asked counter
                 self.game.questionsAsked += 1
                 self.questionField.text = "YOU RAN OUT OF TIME!"
@@ -232,6 +232,7 @@ class ViewController: UIViewController {
         
         // Executes the nextRound method at the dispatch time on the main queue
         dispatch_after(dispatchTime, dispatch_get_main_queue()) {
+            self.count = 16
             self.nextRound()
         }
     }
