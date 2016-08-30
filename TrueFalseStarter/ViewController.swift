@@ -29,7 +29,7 @@ class ViewController: UIViewController {
     @IBOutlet var option6: UIButton!
     let buttonColor = UIColor(red: 12/255, green: 121/255, blue: 150/255, alpha: 1)
     var timer = NSTimer()
-    var count = 16
+    var count = 15
     var gameQuestions = Questions()
     var game = Game()
     var showMenueScreen = true
@@ -55,6 +55,9 @@ class ViewController: UIViewController {
         game.correctQuestions = 0
         gameQuestions.indexOfSelectedQuestion = []
         hideButtons(false)
+        showMenueScreen = true
+        option5.hidden = false
+        option6.hidden = false
         nextRound()
         game.playGameSound("GameSound", fileType: "wav")
     }
@@ -70,7 +73,9 @@ class ViewController: UIViewController {
             displayQuestion()
             
         } else {
-            startTimer()
+            count = 15
+            timer = NSTimer(timeInterval: 1.0, target: self, selector: #selector(ViewController.countUp), userInfo: nil, repeats: true)
+            NSRunLoop.currentRunLoop().addTimer(timer, forMode: NSRunLoopCommonModes)
             timerLabel.hidden = false
             showMenueScreen = false
             option5.hidden = true
@@ -139,7 +144,6 @@ class ViewController: UIViewController {
     
     func nextRound() {
         
-        
         option1.backgroundColor = buttonColor
         option2.backgroundColor = buttonColor
         option3.backgroundColor = buttonColor
@@ -164,12 +168,9 @@ class ViewController: UIViewController {
     
     
     func startTimer() {
-        
-        timer = NSTimer(timeInterval: 1.0, target: self, selector: #selector(ViewController.countUp), userInfo: nil, repeats: true)
-        NSRunLoop.currentRunLoop().addTimer(timer, forMode: NSRunLoopCommonModes)
-        
+        count = 15
     }
-    
+
     func countUp() {
         
         count -= 1
@@ -177,7 +178,7 @@ class ViewController: UIViewController {
             timerLabel.text = String(count)
         } else {
             dispatch_async(dispatch_get_main_queue()) {
-                self.count = 16
+                self.count = 15
                 // Increment the questions asked counter
                 self.game.questionsAsked += 1
                 self.questionField.text = "YOU RAN OUT OF TIME!"
@@ -194,8 +195,9 @@ class ViewController: UIViewController {
         
         // Display play again button
         playAgainButton.hidden = false
-        
+        timer.invalidate()
         questionField.text = "Way to go!\nYou got \(game.correctQuestions) out of \(game.questionsPerRound) correct!"
+        
         
     }
     
@@ -212,6 +214,7 @@ class ViewController: UIViewController {
         } else {
             let questionDictionary = gameQuestions.selectRandomQuestion()
             dispatch_async(dispatch_get_main_queue()) {
+                self.timerLabel.text = String(self.count)
                 self.questionField.text = questionDictionary["Question"]
                 self.option1.setTitle("\(questionDictionary["Option1"]!)", forState: .Normal)
                 self.option2.setTitle("\(questionDictionary["Option2"]!)", forState: .Normal)
@@ -232,7 +235,7 @@ class ViewController: UIViewController {
         
         // Executes the nextRound method at the dispatch time on the main queue
         dispatch_after(dispatchTime, dispatch_get_main_queue()) {
-            self.count = 16
+            self.count = 15
             self.nextRound()
         }
     }
