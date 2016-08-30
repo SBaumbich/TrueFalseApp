@@ -13,7 +13,6 @@ struct Questions {
    
     var indexOfSelectedQuestion: [Int] = []
     var currentQuestion = [String:String]()
-    
     let questions: [[String:String]] = [
         ["Question": "This was the only US President to serve more than two consecutive terms.", "Option1": "George Washington", "Option2": "Franklin D. Roosevelt", "Option3": "Woodrow Wilson", "Option4": "Andrew Jackson", "Answer": "Franklin D. Roosevelt"],
         
@@ -25,7 +24,7 @@ struct Questions {
         
         ["Question": "Which nation produces the most oil?", "Option1": "Iran", "Option2": "Iraq", "Option3": "Brazil", "Option4": "Canada", "Answer": "Canada"],
         
-        ["Question": "Which country has most recently won consecutive World Cups in Soccer?", "Option1": "Italy", "Option2": "Brazil", "Option3": "Argetina", "Option4": "Spain", "Answer": "Brazil"],
+        ["Question": "Which country has most recently won consecutive World Cups in Soccer?", "Option1": "Italy", "Option2": "Brazil", "Option3": "Argentina", "Option4": "Spain", "Answer": "Brazil"],
         
         ["Question": "Which of the following rivers is longest?", "Option1": "Yangtze", "Option2": "Mississippi", "Option3": "Congo", "Option4": "Mekong", "Answer": "Mississippi"],
         
@@ -33,33 +32,32 @@ struct Questions {
         
         ["Question": "Which country was the first to allow women to vote in national elections?", "Option1": "Poland", "Option2": "United States", "Option3": "Sweden", "Option4": "Senegal", "Answer": "Poland"],
         
-        ["Question": "Which of these countries won the most medals in the 2012 Summer Games??", "Option1": "France", "Option2": "Germany", "Option3": "Japan", "Option4": "Great Britian", "Answer": "Great Britian"]
+        ["Question": "Which of these countries won the most medals in the 2012 Summer Games??", "Option1": "France", "Option2": "Germany", "Option3": "Japan", "Option4": "Great Britain", "Answer": "Great Britain"]
     ]
     
     
-    // Get random Index Number
+    
+    // Generate a random index number with max size equal to the number of questions
     func randomIndexNum() -> Int {
         return GKRandomSource.sharedRandom().nextIntWithUpperBound(questions.count)
     }
     
+    // Return a randomly selected question from the questions array
     mutating func selectRandomQuestion() -> [String:String] {
         var questionSelected = false
         
         while (questionSelected == false) {
             let randomQ = randomIndexNum()
             
-            if (indexOfSelectedQuestion.count >= questions.count){
-                break
+            if (indexOfSelectedQuestion.count >= questions.count ){ break
             }
             else if indexOfSelectedQuestion.contains(randomQ) {
                 // Guess another number
-                print("Random Guess Number:\(randomQ)")
             } else {
                 let selectedQuestion = questions[randomQ]
                 indexOfSelectedQuestion.append(randomQ)
-                questionSelected = true
                 currentQuestion = selectedQuestion
-                print("Number of used answers \(indexOfSelectedQuestion.count)")
+                questionSelected = true
                 return selectedQuestion
             }
         }

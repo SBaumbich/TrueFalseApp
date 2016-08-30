@@ -17,8 +17,6 @@ class Game {
     var correctQuestions = 0
     var indexOfSelectedQuestion: Int = 0
     var gameSound: SystemSoundID = 0
-
-    
     
     
     
