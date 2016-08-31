@@ -7,7 +7,6 @@
 //  Copyright © 2016 Treehouse. All rights reserved.
 //
 
-import Foundation
 import UIKit
 import GameKit
 import AudioToolbox
@@ -18,20 +17,20 @@ class ViewController: UIViewController {
 // MARK: Instance variables /
 /////////////////////////////
     
-    @IBOutlet weak var questionField: UILabel!
     @IBOutlet weak var playAgainButton: UIButton!
+    @IBOutlet weak var questionField: UILabel!
+    @IBOutlet var timerLabel: UILabel!
     @IBOutlet var option1: UIButton!
     @IBOutlet var option2: UIButton!
     @IBOutlet var option3: UIButton!
     @IBOutlet var option4: UIButton!
     @IBOutlet var option5: UIButton!
-    @IBOutlet var timerLabel: UILabel!
     @IBOutlet var option6: UIButton!
     let buttonColor = UIColor(red: 12/255, green: 121/255, blue: 150/255, alpha: 1)
-    var timer = NSTimer()
-    var count = 15
     var gameQuestions = Questions()
     var game = Game()
+    var timer = NSTimer()
+    var count = 15
     var showMenueScreen = true
     
 /////////////////////////////
@@ -54,10 +53,9 @@ class ViewController: UIViewController {
         game.questionsAsked = 0
         game.correctQuestions = 0
         gameQuestions.indexOfSelectedQuestion = []
-        hideButtons(false)
         showMenueScreen = true
-        option5.hidden = false
-        option6.hidden = false
+        hideAnswerButtons(false)
+        hideGameModeButtons(true)
         nextRound()
         game.playGameSound("GameSound", fileType: "wav")
     }
@@ -67,9 +65,8 @@ class ViewController: UIViewController {
         
         if sender.titleLabel?.text == "Norman" {
             showMenueScreen = false
-            option5.hidden = true
-            option6.hidden = true
-            hideButtons(false)
+            hideGameModeButtons(true)
+            hideAnswerButtons(false)
             displayQuestion()
             
         } else {
@@ -78,9 +75,8 @@ class ViewController: UIViewController {
             NSRunLoop.currentRunLoop().addTimer(timer, forMode: NSRunLoopCommonModes)
             timerLabel.hidden = false
             showMenueScreen = false
-            option5.hidden = true
-            option6.hidden = true
-            hideButtons(false)
+            hideGameModeButtons(true)
+            hideAnswerButtons(false)
             displayQuestion()
             
         }
@@ -89,7 +85,7 @@ class ViewController: UIViewController {
     @IBAction func checkAnswer(sender: UIButton) {
         
         // Lock buttons
-        enableButton(false)
+        enableAnswerButton(false)
         
         // Increment the questions asked counter
         game.questionsAsked += 1
@@ -126,7 +122,8 @@ class ViewController: UIViewController {
 // MARK: Helper Methods//////
 /////////////////////////////
     
-    func hideButtons(status: Bool) {
+    func hideAnswerButtons(status: Bool) {
+        
         option1.hidden = status
         option2.hidden = status
         option3.hidden = status
@@ -134,21 +131,30 @@ class ViewController: UIViewController {
     }
     
     
-    func enableButton(status: Bool) {
+    func enableAnswerButton(status: Bool) {
+        
         option1.enabled = status
         option2.enabled = status
         option3.enabled = status
         option4.enabled = status
     }
     
+    func changeButtonBackgroundColor(color: UIColor) {
+        
+        option1.backgroundColor = color
+        option2.backgroundColor = color
+        option3.backgroundColor = color
+        option4.backgroundColor = color
+    }
+    
+    func hideGameModeButtons(status: Bool) {
+        option5.hidden = status
+        option6.hidden = status
+    }
     
     func nextRound() {
         
-        option1.backgroundColor = buttonColor
-        option2.backgroundColor = buttonColor
-        option3.backgroundColor = buttonColor
-        option4.backgroundColor = buttonColor
-        
+        changeButtonBackgroundColor(buttonColor)
         if game.questionsAsked >= game.questionsPerRound {
             // Game is over
             timerLabel.hidden = true
@@ -157,18 +163,6 @@ class ViewController: UIViewController {
             // Continue game
             displayQuestion()
         }
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    func startTimer() {
-        count = 15
     }
 
     func countUp() {
@@ -191,28 +185,27 @@ class ViewController: UIViewController {
     func displayScore() {
         
         // Hide the answer buttons
-        hideButtons(true)
+        hideAnswerButtons(true)
         
         // Display play again button
         playAgainButton.hidden = false
+        // Stop the timer from running
         timer.invalidate()
         questionField.text = "Way to go!\nYou got \(game.correctQuestions) out of \(game.questionsPerRound) correct!"
-        
-        
     }
-    
     
     func displayQuestion() {
         
         if showMenueScreen == true {
             playAgainButton.hidden = true
             timerLabel.hidden = true
-            hideButtons(true)
+            hideAnswerButtons(true)
             questionField.text = "Select Game Mode"
             
-            
         } else {
+            // Select a new random question
             let questionDictionary = gameQuestions.selectRandomQuestion()
+            // Update UI on main thred
             dispatch_async(dispatch_get_main_queue()) {
                 self.timerLabel.text = String(self.count)
                 self.questionField.text = questionDictionary["Question"]
@@ -221,11 +214,10 @@ class ViewController: UIViewController {
                 self.option3.setTitle("\(questionDictionary["Option3"]!)", forState: .Normal)
                 self.option4.setTitle("\(questionDictionary["Option4"]!)", forState: .Normal)
                 self.playAgainButton.hidden = true
-                self.enableButton(true)
+                self.enableAnswerButton(true)
             }
         }
     }
-    
     
     func loadNextRoundWithDelay(seconds seconds: Int) {
         // Converts a delay in seconds to nanoseconds as signed 64 bit integer
